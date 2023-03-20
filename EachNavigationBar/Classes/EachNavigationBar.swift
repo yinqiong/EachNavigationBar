@@ -28,7 +28,9 @@ open class EachNavigationBar: UINavigationBar {
         }
         didSet {
             frame.size.height = barHeight + _additionalHeight
-            viewController?.adjustsSafeAreaInsets()
+            if #available(iOS 11.0, *) {
+                viewController?.adjustsSafeAreaInsets()
+            }
         }
     }
     
@@ -138,7 +140,9 @@ extension EachNavigationBar {
             changed.insert(\.isHidden)
         }
         didSet {
-            viewController?.adjustsSafeAreaInsets()
+            if #available(iOS 11.0, *) {
+                viewController?.adjustsSafeAreaInsets()
+            } 
         }
     }
     
@@ -217,6 +221,7 @@ extension EachNavigationBar {
         }
     }
     
+    @available(iOS 11.0, *)
     open override var prefersLargeTitles: Bool {
         get { return super.prefersLargeTitles }
         set {
@@ -232,6 +237,7 @@ extension EachNavigationBar {
         }
     }
     
+    @available(iOS 11.0, *)
     open override var largeTitleTextAttributes: [NSAttributedString.Key : Any]? {
         get { return super.largeTitleTextAttributes }
         set {
@@ -276,8 +282,9 @@ extension EachNavigationBar {
     }
     
     var _additionalHeight: CGFloat {
-        guard !isLargeTitleShown else {
-            return 0
+        
+        if #available(iOS 11.0, *) {
+            if isLargeTitleShown { return 0 }
         }
         
         return additionalHeight
@@ -328,6 +335,7 @@ private extension EachNavigationBar {
         return _contentView
     }
     
+    @available(iOS 11.0, *)
     var isLargeTitleShown: Bool {
         return prefersLargeTitles && viewController?._navigationItem.largeTitleDisplayMode != .never
     }
@@ -347,10 +355,14 @@ private extension EachNavigationBar {
             height: bounds.height + barMinY
         )
         
-        adjustsLayoutMargins()
+        if #available(iOS 11.0, *) {
+            adjustsLayoutMargins()
+        }
     }
     
+    @available(iOS 11.0, *)
     func adjustsLayoutMargins() {
+        
         layoutMargins = .barLayoutMargins
         
         guard let contentView = contentView else { return }
@@ -367,6 +379,7 @@ private extension EachNavigationBar {
                 height: contentView.frame.height
             )
         } else {
+           
             contentView.frame.origin.y = isLargeTitleShown ? 0 : additionalHeight
             contentView.layoutMargins = layoutPaddings
         }

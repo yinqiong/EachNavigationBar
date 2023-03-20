@@ -60,14 +60,21 @@ extension UIViewController {
         guard let navigationBar = navigationController?.navigationBar else { return }
         navigationBar.barStyle = _navigationBar.superBarStyle
         navigationBar.isHidden = _navigationBar.isHidden
-        adjustsSafeAreaInsets()
-        navigationItem.title = _navigationItem.title
-        navigationItem.largeTitleDisplayMode = _navigationItem.largeTitleDisplayMode
-        navigationBar.prefersLargeTitles = _navigationBar.prefersLargeTitles
-        navigationBar.largeTitleTextAttributes = _navigationBar.largeTitleTextAttributes
+        
+        if #available(iOS 11.0, *) {
+            adjustsSafeAreaInsets()
+            
+            navigationItem.title = _navigationItem.title
+            navigationItem.largeTitleDisplayMode = _navigationItem.largeTitleDisplayMode
+            navigationBar.prefersLargeTitles = _navigationBar.prefersLargeTitles
+            navigationBar.largeTitleTextAttributes = _navigationBar.largeTitleTextAttributes
+        }
+        
         view.bringSubviewToFront(_navigationBar)
     }
     
+    
+    @available(iOS 11.0, *)
     func adjustsSafeAreaInsets() {
         let height = _navigationBar.additionalView?.frame.height ?? 0
         additionalSafeAreaInsets.top = _navigationBar.isHidden
@@ -133,9 +140,11 @@ private extension EachNavigationBar {
             self.shadow = shadow
         }
         
+        if #available(iOS 11.0, *) {
         layoutPaddings = configuration.layoutPaddings
         prefersLargeTitles = configuration.prefersLargeTitles
         largeTitleTextAttributes = configuration.largeTitle.textAttributes
+        }
         
         // 清空修改记录
         changed.removeAll()
@@ -197,11 +206,17 @@ private extension EachNavigationBar {
         if !changed.contains(\.layoutPaddings) {
             layoutPaddings = configuration.layoutPaddings
         }
-        if !changed.contains(\.prefersLargeTitles) {
-            prefersLargeTitles = configuration.prefersLargeTitles
-        }
-        if !changed.contains(\.largeTitleTextAttributes) {
-            largeTitleTextAttributes = configuration.largeTitle.textAttributes
+        
+        if #available(iOS 11.0, *) {
+            
+            if !changed.contains(\.prefersLargeTitles) {
+                prefersLargeTitles = configuration.prefersLargeTitles
+            }
+            if !changed.contains(\.largeTitleTextAttributes) {
+                largeTitleTextAttributes = configuration.largeTitle.textAttributes
+            }
+            
+            
         }
         
         // 恢复原始记录
@@ -212,7 +227,9 @@ private extension EachNavigationBar {
 private extension EachNavigationItem {
     
     func apply(_ configuration: UINavigationController.Configuration) {
-        largeTitleDisplayMode = configuration.largeTitle.displayMode
+        if #available(iOS 11.0, *) {
+            largeTitleDisplayMode = configuration.largeTitle.displayMode
+        }
         
         // 清空修改记录
         changed.removeAll()
@@ -221,8 +238,10 @@ private extension EachNavigationItem {
     func update(_ configuration: UINavigationController.Configuration) {
         let original = changed
         
-        if !changed.contains(\.largeTitleDisplayMode) {
-            largeTitleDisplayMode = configuration.largeTitle.displayMode
+        if #available(iOS 11.0, *) {
+            if !changed.contains(\.largeTitleDisplayMode) {
+                largeTitleDisplayMode = configuration.largeTitle.displayMode
+            }
         }
         
         // 恢复原始记录
